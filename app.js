@@ -1,54 +1,18 @@
 'use strict';
+/* Mijoz sahifasi. Ma'lumotlar qatlami: data.js */
 
-/* ---------- Holat va sozlamalar ---------- */
-let SETTINGS = { open: '09:00', close: '19:00', step: 30 }; // server /api/config dan yangilanadi
-let services = [];
-let busy = [];                 // tanlangan sanadagi band oraliqlar: [{start, duration}]
 const state = { name: '', phone: '', serviceId: null, date: '', time: null };
-
 const $ = id => document.getElementById(id);
 const el = { name: $('name'), phone: $('phone'), date: $('date'), services: $('services'), slots: $('slots') };
-
-const toMin = t => { const [h, m] = t.split(':').map(Number); return h * 60 + m; };
-const toTime = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
-const pad = n => String(n).padStart(2, '0');
-const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
-const nowMin = () => { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); };
-const money = n => Number(n).toLocaleString('ru-RU').replace(/ /g, ' ') + " so'm";
-const fmtDate = s => { const [y, m, d] = s.split('-'); return `${d}.${m}.${y}`; };
-const currentService = () => services.find(s => s.id === state.serviceId) || null;
-
-/** Oraliq [startMin, startMin+dur) bo'shmi? (yakuniy tekshiruv serverda ham bajariladi) */
-function isFree(date, startMin, dur) {
-  if (startMin + dur > toMin(SETTINGS.close)) return false;
-  if (date === todayStr() && startMin <= nowMin()) return false;
-  return !busy.some(b => startMin < b.start + b.duration && b.start < startMin + dur);
-}
-
-/* ---------- Serverdan yuklash ---------- */
-async function loadConfig() {
-  const r = await api('GET', '/api/config');
-  if (r.ok) SETTINGS = r.data;
-}
-async function loadServices() {
-  const r = await api('GET', '/api/services');
-  if (r.ok) { services = r.data; el.services.dataset.failed = ''; }
-  else el.services.dataset.failed = '1';
-  renderServices();
-}
-async function loadBusy() {
-  if (!state.date) { busy = []; return; }
-  const r = await api('GET', '/api/busy?date=' + encodeURIComponent(state.date));
-  if (r.ok) busy = r.data;
-}
+const currentService = () => getServices().find(s => s.id === state.serviceId) || null;
 
 /* ---------- Xizmatlar ---------- */
 function renderServices() {
-  if (!services.some(s => s.id === state.serviceId)) state.serviceId = null;
+  const list = getServices();
+  if (!list.some(s => s.id === state.serviceId)) state.serviceId = null;
   el.services.innerHTML = '';
-  if (el.services.dataset.failed) { el.services.innerHTML = '<div class="empty">Xizmatlarni yuklab bo\'lmadi. Sahifani yangilang.</div>'; return; }
-  if (!services.length) { el.services.innerHTML = '<div class="empty">Hozircha xizmatlar yo\'q</div>'; return; }
-  services.forEach(s => {
+  if (!list.length) { el.services.innerHTML = '<div class="empty">Hozircha xizmatlar yo\'q</div>'; return; }
+  list.forEach(s => {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'svc'; b.setAttribute('role', 'radio');
     b.setAttribute('aria-checked', String(s.id === state.serviceId));
@@ -124,7 +88,7 @@ function validate() {
 
 /* ---------- Tasdiqlash oynasi ---------- */
 const modal = $('modal');
-let lastFocus = null, sending = false;
+let lastFocus = null;
 
 function openModal() {
   const svc = currentService();
@@ -142,20 +106,16 @@ function openModal() {
 }
 function closeModal() { modal.hidden = true; if (lastFocus) lastFocus.focus(); }
 
-async function confirmBooking() {
-  if (sending) return;
-  sending = true; $('btn-ok').disabled = true;
+function confirmBooking() {
   const svc = currentService();
-  const r = await api('POST', '/api/bookings', {
-    name: state.name.trim(), phone: state.phone, serviceId: state.serviceId, date: state.date, time: state.time,
+  const ok = svc && addBooking({
+    id: Date.now(), name: state.name.trim(), phone: state.phone,
+    serviceId: svc.id, service: svc.name, price: svc.price, duration: svc.duration,
+    date: state.date, time: state.time, start: toMin(state.time),
   });
-  sending = false; $('btn-ok').disabled = false;
-
-  if (!r.ok) {
-    const e = $('m-error');
-    e.textContent = (r.data && r.data.error) || 'Xatolik yuz berdi. Qayta urinib ko\'ring';
-    e.hidden = false;
-    if (r.status === 409) { state.time = null; await loadBusy(); renderSlots(); }   // vaqt band bo'lib qolgan
+  if (!ok) {   // vaqt band bo'lib qolgan (yoki saqlab bo'lmadi)
+    const e = $('m-error'); e.textContent = 'Bu vaqt band, boshqasini tanlang'; e.hidden = false;
+    state.time = null; renderSlots();
     return;
   }
   $('done-text').textContent = `${svc.name} · ${fmtDate(state.date)} · ${state.time}`;
@@ -163,10 +123,9 @@ async function confirmBooking() {
   $('btn-close').focus();
 }
 
-async function resetForm() {
+function resetForm() {
   Object.assign(state, { name: '', phone: '', serviceId: null, time: null });
   el.name.value = ''; el.phone.value = '';
-  await loadBusy();
   renderServices(); renderSlots();
 }
 
@@ -174,28 +133,17 @@ async function resetForm() {
 el.name.addEventListener('input', () => { state.name = el.name.value; clearError('name'); });
 el.phone.addEventListener('input', () => { el.phone.value = state.phone = formatPhone(el.phone.value); clearError('phone'); });
 el.phone.addEventListener('focus', () => { if (!el.phone.value) el.phone.value = state.phone = '+998'; });
-el.date.addEventListener('change', async () => { state.date = el.date.value; clearError('date'); await loadBusy(); renderSlots(); });
+el.date.addEventListener('change', () => { state.date = el.date.value; clearError('date'); renderSlots(); });
 
 $('form').addEventListener('submit', e => { e.preventDefault(); if (validate()) openModal(); });
 $('btn-back').addEventListener('click', closeModal);          // ma'lumotlar saqlanib qoladi
 $('btn-ok').addEventListener('click', confirmBooking);
 $('btn-close').addEventListener('click', () => { closeModal(); resetForm(); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden && !$('m-confirm').hidden) closeModal(); });
-
-/* Admin yangi xizmat qo'shsa yoki boshqa mijoz yozilsa, ro'yxat avtomatik yangilanadi */
-async function refresh() {
-  if (!modal.hidden) return;
-  await Promise.all([loadServices(), loadBusy()]);
-  renderSlots();
-}
-setInterval(refresh, 15000);
-document.addEventListener('visibilitychange', () => { if (!document.hidden) refresh(); });
+window.addEventListener('storage', () => { if (modal.hidden) { renderServices(); renderSlots(); } });
 
 /* ---------- Boshlash ---------- */
-(async function init() {
-  el.date.min = todayStr();
-  el.date.value = state.date = todayStr();
-  await loadConfig();
-  await Promise.all([loadServices(), loadBusy()]);
-  renderSlots();
-})();
+el.date.min = todayStr();
+el.date.value = state.date = todayStr();
+renderServices();
+renderSlots();

@@ -1,18 +1,12 @@
 'use strict';
+/* Admin paneli. Ma'lumotlar qatlami: data.js */
 
+let services = getServices();
 const $ = id => document.getElementById(id);
-const money = n => Number(n).toLocaleString('ru-RU').replace(/ /g, ' ') + " so'm";
-const fmtDate = s => { const [y, m, d] = s.split('-'); return `${d}.${m}.${y}`; };
-let services = [];
 
 function toast(msg) {
   const t = $('toast'); t.textContent = msg; t.hidden = false;
-  clearTimeout(toast.id); toast.id = setTimeout(() => { t.hidden = true; }, 2400);
-}
-/** Sessiya tugagan bo'lsa, kirish sahifasiga qaytaradi */
-function guard(r) {
-  if (r.status === 401) { location.replace('admin.html'); return false; }
-  return true;
+  clearTimeout(toast.id); toast.id = setTimeout(() => { t.hidden = true; }, 2200);
 }
 
 /* ---------- Bo'limlar ---------- */
@@ -21,18 +15,13 @@ function showTab(name) {
   $('tab-services').setAttribute('aria-selected', String(s));
   $('tab-bookings').setAttribute('aria-selected', String(!s));
   $('sec-services').hidden = !s; $('sec-bookings').hidden = s;
-  if (s) loadServices(); else loadBookings();
+  if (!s) renderBookings();
 }
 $('tab-services').addEventListener('click', () => showTab('services'));
 $('tab-bookings').addEventListener('click', () => showTab('bookings'));
-$('btn-logout').addEventListener('click', async () => { await api('POST', '/api/admin/logout', {}); location.replace('admin.html'); });
+$('btn-logout').addEventListener('click', () => { logout(); location.replace('admin.html'); });
 
 /* ---------- Xizmatlar ---------- */
-async function loadServices() {
-  const r = await api('GET', '/api/services');
-  if (r.ok) { services = r.data; renderServices(); }
-  else toast("Xizmatlarni yuklab bo'lmadi");
-}
 function renderServices() {
   const box = $('svc-list'); box.innerHTML = '';
   if (!services.length) {
@@ -58,7 +47,7 @@ function renderServices() {
 }
 
 /* --- qo'shish / tahrirlash --- */
-let editingId = null, lastFocus = null, saving = false;
+let editingId = null, lastFocus = null;
 const fld = ['name', 'price', 'duration'];
 const inp = { name: $('svc-name'), price: $('svc-price'), duration: $('svc-duration') };
 const setErr = (f, m) => { const b = $('f-' + f); b.classList.add('bad'); const e = b.querySelector('.err'); e.textContent = m; e.hidden = false; };
@@ -81,9 +70,8 @@ $('mf-cancel').addEventListener('click', closeForm);
 
 const parsePosInt = v => /^\d+$/.test(v.trim()) && Number(v) > 0 ? Number(v) : null;
 
-$('svc-form').addEventListener('submit', async e => {
+$('svc-form').addEventListener('submit', e => {
   e.preventDefault();
-  if (saving) return;
   fld.forEach(clrErr);
   const name = inp.name.value.trim();
   const price = parsePosInt(inp.price.value), duration = parsePosInt(inp.duration.value);
@@ -95,19 +83,15 @@ $('svc-form').addEventListener('submit', async e => {
   else if (duration === null) { setErr('duration', "Davomiylik musbat butun son bo'lsin"); ok = false; }
   if (!ok) return;
 
-  saving = true;
-  const body = { name, price, duration };
-  const r = editingId === null
-    ? await api('POST', '/api/admin/services', body)
-    : await api('PUT', '/api/admin/services/' + editingId, body);
-  saving = false;
-  if (!guard(r)) return;
-  if (!r.ok) {
-    const f = r.data && r.data.field;
-    if (f && fld.includes(f)) setErr(f, r.data.error); else toast((r.data && r.data.error) || 'Saqlab bo\'lmadi');
-    return;
+  if (editingId === null) {
+    const id = services.reduce((m, s) => Math.max(m, s.id), 0) + 1;
+    services.push({ id, name, price, duration });
+  } else {
+    const s = services.find(x => x.id === editingId);
+    if (s) Object.assign(s, { name, price, duration });
   }
-  closeForm(); await loadServices(); toast('Saqlandi');
+  if (!saveServices(services)) { toast("Saqlab bo'lmadi"); return; }
+  closeForm(); renderServices(); toast('Saqlandi');
 });
 
 /* --- o'chirish --- */
@@ -119,29 +103,25 @@ function openDelete(s) {
 }
 function closeDelete() { $('modal-del').hidden = true; if (lastFocus) lastFocus.focus(); }
 $('md-cancel').addEventListener('click', closeDelete);
-$('md-ok').addEventListener('click', async () => {
-  const r = await api('DELETE', '/api/admin/services/' + deletingId);
-  if (!guard(r)) return;
-  closeDelete();
-  if (!r.ok && r.status !== 404) { toast((r.data && r.data.error) || "O'chirib bo'lmadi"); return; }
-  await loadServices(); toast("O'chirildi");
+$('md-ok').addEventListener('click', () => {
+  services = services.filter(s => s.id !== deletingId);
+  saveServices(services);
+  closeDelete(); renderServices(); toast("O'chirildi");
 });
 document.addEventListener('keydown', e => {
   if (e.key !== 'Escape') return;
   if (!$('modal-form').hidden) closeForm(); else if (!$('modal-del').hidden) closeDelete();
 });
 
-/* ---------- Yozilishlar (faqat ko'rish) ---------- */
-async function loadBookings() {
-  const r = await api('GET', '/api/admin/bookings');   // server sana va vaqt bo'yicha tartiblaydi, eng yaqini birinchi
-  if (!guard(r)) return;
+/* ---------- Yozilishlar (faqat ko'rish, eng yaqini birinchi) ---------- */
+function renderBookings() {
   const body = $('bk-body'); body.innerHTML = '';
-  if (!r.ok) { toast("Yozilishlarni yuklab bo'lmadi"); return; }
-  if (!r.data.length) {
+  const list = getBookings().slice().sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  if (!list.length) {
     const tr = document.createElement('tr'); const td = document.createElement('td');
     td.colSpan = 6; td.className = 'empty'; td.textContent = "Hozircha yozilishlar yo'q"; tr.appendChild(td); body.appendChild(tr); return;
   }
-  r.data.forEach(b => {
+  list.forEach(b => {
     const tr = document.createElement('tr');
     [fmtDate(b.date), b.time, b.name, b.phone, b.service, money(b.price)].forEach((v, i) => {
       const td = document.createElement('td'); td.textContent = v; if (i === 5) td.className = 'num'; tr.appendChild(td);
@@ -149,11 +129,7 @@ async function loadBookings() {
     body.appendChild(tr);
   });
 }
+window.addEventListener('storage', e => { if (e.key === KEY_BOOKINGS && !$('sec-bookings').hidden) renderBookings(); });
 
-/* ---------- Boshlash: sessiyani tekshirish ---------- */
-(async function init() {
-  const r = await api('GET', '/api/admin/me');
-  if (!r.ok) { location.replace('admin.html'); return; }
-  document.body.hidden = false;
-  loadServices();
-})();
+if (!isLoggedIn()) location.replace('admin.html');
+else { document.body.hidden = false; renderServices(); }
