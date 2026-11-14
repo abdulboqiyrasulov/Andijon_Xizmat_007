@@ -9,6 +9,8 @@ body{font-family:'Inter',system-ui,sans-serif;color:var(--text);background:#fff;
 .hero{background:linear-gradient(165deg,#5A70FA 0%,#4359F5 50%,#2E3FD0 100%);color:#fff;padding:20px 0 72px}
 .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:18px}
 .logo .mark{width:32px;height:32px;border-radius:10px;background:var(--yellow);color:var(--navy);display:grid;place-items:center}
+.logo .mark svg,.tick svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tick svg{width:32px;height:32px;stroke-width:2.5}
 .hero h1{font-size:28px;line-height:1.15;font-weight:800;letter-spacing:-.02em;margin:22px 0 8px}
 .hero p{color:rgba(255,255,255,.85)}
 
