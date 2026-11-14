@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sartaroshxona – Onlayn yozilish (UI/UX)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#4359F5; --navy:#091A3D; --white:#FFFFFF; --yellow:#F9DF32;
+  --text:#0E1B3D; --muted:#6B7899; --line:#E4E9F5; --soft:#F3F5FD;
+  --danger:#E5484D; --ok:#1FA971;
+  --phone-w:330px; --phone-h:680px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,sans-serif; color:var(--text);
+  min-height:100vh; background:linear-gradient(160deg,#EAF0FB 0%,#DDE5F3 55%,#E9EEF8 100%);
+  display:flex; flex-direction:column; align-items:center; padding:48px 16px 64px;
+}
+.stage{display:flex; gap:48px; justify-content:center; align-items:center; flex-wrap:wrap; width:100%; max-width:1200px}
+.cap{text-align:center; font-size:13px; font-weight:600; color:var(--muted); margin-top:18px; letter-spacing:.02em}
+.slot{display:flex; flex-direction:column; align-items:center}
+.slot.mid{transform:translateY(-14px)}
+
+/* phone frame */
+.phone{
+  width:var(--phone-w); height:var(--phone-h); border-radius:38px; padding:10px;
+  background:#0B1020; position:relative;
+  box-shadow:0 40px 70px -20px rgba(9,26,61,.35),0 12px 24px -8px rgba(9,26,61,.2);
+}
+.screen{width:100%;height:100%;border-radius:30px;overflow:hidden;position:relative;display:flex;flex-direction:column}
+.notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:90px;height:22px;background:#0B1020;border-radius:14px;z-index:5}
+.pad{padding:44px 20px 20px;flex:1;display:flex;flex-direction:column;min-height:0}
+
+/* icons */
+svg.i{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* shared */
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px}
+.logo .mark{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--yellow);color:var(--navy)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:50px;border-radius:30px;border:0;font:700 15px 'Inter';cursor:pointer;width:100%}
+.err{color:var(--danger);font-size:11.5px;font-weight:500;margin-top:4px}
+
+/* ---------- 1. MIJOZ (blue) ---------- */
+.p-blue .screen{background:linear-gradient(165deg,#5A70FA 0%,#4359F5 45%,#2E3FD0 100%);color:#fff}
+.p-blue .screen{overflow:visible}
+.nav{display:flex;justify-content:space-between;align-items:center}
+.nav .logo .mark{background:var(--yellow)}
+.nav .tel{font-size:12px;font-weight:600;background:rgba(255,255,255,.18);padding:7px 12px;border-radius:20px}
+.p-blue h1{font-size:25px;line-height:1.15;font-weight:800;margin:16px 0 6px;letter-spacing:-.02em}
+.p-blue .lead{font-size:12.5px;line-height:1.45;color:rgba(255,255,255,.82)}
+.form{background:#fff;color:var(--text);border-radius:20px;padding:14px;margin-top:14px;box-shadow:0 18px 30px -12px rgba(9,26,61,.45)}
+.fld{margin-bottom:9px}
+.fld label{display:block;font-size:10.5px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.inp{height:36px;border:1.5px solid var(--line);border-radius:12px;padding:0 11px;display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;background:#fff}
+.inp.bad{border-color:var(--danger)}
+.inp .ph{color:#9AA5C4}
+.inp .r{margin-left:auto;color:var(--muted)}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.slot-b{height:30px;border-radius:10px;border:1.5px solid var(--line);font-size:11.5px;font-weight:600;display:grid;place-items:center}
+.slot-b.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.slot-b.off{background:var(--soft);color:#B5BDD6;text-decoration:line-through;border-color:transparent}
+.p-blue .btn{background:var(--yellow);color:var(--navy);margin-top:10px;height:46px;box-shadow:0 8px 16px -6px rgba(249,223,50,.7)}
+.float{position:absolute;background:#fff;color:var(--text);border-radius:16px;padding:10px 12px;display:flex;gap:9px;align-items:center;font-size:11px;box-shadow:0 18px 30px -10px rgba(9,26,61,.4);z-index:6}
+.float b{display:block;font-size:12px}
+.float small{color:var(--muted);font-size:10.5px}
+.float .ic{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--yellow);color:var(--navy)}
+.float.ok .ic{background:#DDF5EA;color:var(--ok)}
+.float.f1{right:-22px;top:150px}
+.float.f2{left:-26px;bottom:78px}
+
+/* ---------- 2. ADMIN PANEL (white) ---------- */
+.p-white .screen{background:#fff}
+.p-white .pad{padding-top:44px}
+.top{display:flex;justify-content:space-between;align-items:center}
+.top .logo .mark{background:var(--primary);color:#fff}
+.out{display:flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;color:var(--muted);border:1.5px solid var(--line);border-radius:20px;padding:6px 11px}
+.tabs{display:flex;background:var(--soft);border-radius:14px;padding:4px;margin:14px 0 12px}
+.tabs div{flex:1;text-align:center;font-size:12.5px;font-weight:600;padding:9px 0;border-radius:11px;color:var(--muted)}
+.tabs .on{background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(9,26,61,.1)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.stat{background:var(--soft);border-radius:14px;padding:9px 10px}
+.stat b{font-size:17px;font-weight:800;display:block}
+.stat span{font-size:10px;color:var(--muted);font-weight:500}
+.row-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.row-h h3{font-size:13.5px;font-weight:700}
+.add{display:flex;align-items:center;gap:4px;background:var(--primary);color:#fff;font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:20px}
+.card{border:1.5px solid var(--line);border-radius:16px;padding:11px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.card .t{flex:1;min-width:0}
+.card .t b{font-size:12.5px;display:block}
+.card .t small{font-size:10.5px;color:var(--muted)}
+.card .price{font-size:12px;font-weight:700;color:var(--primary);white-space:nowrap}
+.acts{display:flex;gap:6px}
+.acts span{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--soft);color:var(--primary)}
+.acts span.d{color:var(--danger);background:#FDECEC}
+.acts svg{width:14px;height:14px}
+.badge{font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;background:#E6EAFE;color:var(--primary);white-space:nowrap}
+.badge.y{background:#FFF8CC;color:#8A7600}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--navy);color:var(--yellow);display:grid;place-items:center;font-size:12px;font-weight:700;flex:none}
+.sheet{margin-top:auto}
+
+/* ---------- 3. KIRISH (navy) ---------- */
+.p-navy .screen{background:linear-gradient(180deg,#0E2250 0%,#091A3D 60%,#06122B 100%);color:#fff}
+.p-navy .logo .mark{background:var(--yellow)}
+.p-navy h2{font-size:25px;line-height:1.15;font-weight:800;margin:22px 0 6px;letter-spacing:-.02em}
+.p-navy .lead{font-size:12.5px;color:rgba(255,255,255,.68);line-height:1.45;margin-bottom:16px}
+.fc{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:12px 14px;margin-bottom:10px}
+.fc label{font-size:10.5px;font-weight:600;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.fc label .yi{width:24px;height:24px;border-radius:8px;background:var(--yellow);color:var(--navy);display:grid;place-items:center}
+.fc label .yi svg{width:14px;height:14px}
+.fc .v{font-size:14px;font-weight:600;letter-spacing:.02em}
+.fc.bad{border-color:var(--danger)}
+.p-navy .err{color:#FF8A8E;font-size:12px;margin:2px 0 10px;display:flex;align-items:center;gap:6px}
+.p-navy .btn{background:var(--yellow);color:var(--navy);margin-top:4px;box-shadow:0 10px 20px -8px rgba(249,223,50,.55)}
+.bottom{margin-top:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid rgba(255,255,255,.12);padding-top:14px}
+.bottom div{text-align:center}
+.bottom b{display:block;font-size:17px;font-weight:800;color:var(--yellow)}
+.bottom span{font-size:10px;color:rgba(255,255,255,.6)}
+
+/* responsive */
+@media (max-width:1100px){
+  .stage{gap:28px}
+  .phone{zoom:.86}
+}
+@media (max-width:760px){
+  .stage{flex-direction:column;gap:48px}
+  .slot.mid{transform:none}
+  .phone{zoom:1}
+  .float.f1{right:-6px}.float.f2{left:-6px}
+}
+@media (max-width:380px){.phone{zoom:.9}}
+</style>
+</head>
+<body>
+
+<!-- ikonalar -->
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></symbol>
+  <symbol id="cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></symbol>
+  <symbol id="phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="check" viewBox="0 0 24 24"><path d="m5 12 5 5 9-10"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/></symbol>
+  <symbol id="trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></symbol>
+  <symbol id="logout" viewBox="0 0 24 24"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"/></symbol>
+  <symbol id="lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16.5v.01"/></symbol>
+</svg>
+
+<main class="stage">
+
+  <!-- 1. MIJOZ SAHIFASI -->
+  <div class="slot">
+    <div class="phone p-blue">
+      <div class="notch"></div>
+      <div class="screen"><div class="pad">
+        <div class="nav">
+          <div class="logo"><span class="mark"><svg class="i"><use href="#scissors"/></svg></span>Sartarosh</div>
+          <span class="tel">+998 90 123 45 67</span>
+        </div>
+        <h1>Onlayn yoziling,<br>navbat kutmang</h1>
+        <p class="lead">Xizmat va qulay vaqtni tanlang — narxni oldindan ko'ring.</p>
+
+        <div class="form">
+          <div class="fld"><label>Ism</label><div class="inp"><svg class="i"><use href="#user"/></svg>Jasur</div></div>
+          <div class="fld"><label>Xizmat</label>
+            <div class="inp"><span>Soch olish — 50 000 so'm, 30 daq.</span><svg class="i r"><use href="#chev"/></svg></div></div>
+          <div class="fld"><label>Vaqt</label>
+            <div class="slots">
+              <div class="slot-b off">09:00</div><div class="slot-b off">09:30</div>
+              <div class="slot-b on">10:00</div><div class="slot-b">10:30</div>
+            </div>
+            <div class="err">Vaqtni tanlang</div>
+          </div>
+        </div>
+        <button class="btn">Yozilish</button>
+      </div>
+      <div class="float f1"><span class="ic"><svg class="i"><use href="#clock"/></svg></span><div><b>Bo'sh vaqt</b><small>Bugun 10:30</small></div></div>
+      <div class="float ok f2"><span class="ic"><svg class="i"><use href="#check"/></svg></span><div><b>Siz muvaffaqiyatli yozildingiz</b><small>Soch olish · 50 000 so'm</small></div></div>
+      </div>
+    </div>
+    <div class="cap">1 · Mijoz sahifasi</div>
+  </div>
+
+  <!-- 2. ADMIN PANELI -->
+  <div class="slot mid">
+    <div class="phone p-white">
+      <div class="notch"></div>
+      <div class="screen"><div class="pad">
+        <div class="top">
+          <div class="logo"><span class="mark"><svg class="i"><use href="#scissors"/></svg></span>Admin</div>
+          <span class="out"><svg class="i" style="width:14px;height:14px"><use href="#logout"/></svg>Chiqish</span>
+        </div>
+        <div class="tabs"><div class="on">Xizmatlar</div><div>Yozilishlar</div></div>
+        <div class="stats">
+          <div class="stat"><b>4</b><span>Xizmat</span></div>
+          <div class="stat"><b>12</b><span>Yozilish</span></div>
+          <div class="stat"><b>3</b><span>Bugun</span></div>
+        </div>
+        <div class="row-h"><h3>Xizmatlar</h3><span class="add"><svg class="i" style="width:13px;height:13px"><use href="#plus"/></svg>Qo'shish</span></div>
+
+        <div class="card"><div class="t"><b>Soch olish</b><small>30 daqiqa</small></div><span class="price">50 000</span>
+          <div class="acts"><span><svg class="i"><use href="#edit"/></svg></span><span class="d"><svg class="i"><use href="#trash"/></svg></span></div></div>
+        <div class="card"><div class="t"><b>Soqol olish</b><small>20 daqiqa</small></div><span class="price">30 000</span>
+          <div class="acts"><span><svg class="i"><use href="#edit"/></svg></span><span class="d"><svg class="i"><use href="#trash"/></svg></span></div></div>
+
+        <div class="row-h" style="margin-top:6px"><h3>Yaqin yozilishlar</h3><span class="badge">Eng yaqini</span></div>
+        <div class="card"><div class="avatar">J</div><div class="t"><b>Jasur · +998 90 123 45 67</b><small>14.11 · 10:00 · Soch olish</small></div><span class="badge y">50 000</span></div>
+        <div class="card"><div class="avatar">A</div><div class="t"><b>Akmal · +998 93 555 12 12</b><small>14.11 · 11:30 · Soqol olish</small></div><span class="badge y">30 000</span></div>
+      </div></div>
+    </div>
+    <div class="cap">2 · Admin paneli</div>
+  </div>
+
+  <!-- 3. ADMIN KIRISH -->
+  <div class="slot">
+    <div class="phone p-navy">
+      <div class="notch"></div>
+      <div class="screen"><div class="pad">
+        <div class="logo"><span class="mark"><svg class="i"><use href="#scissors"/></svg></span>Sartarosh</div>
+        <h2>Admin<br>paneliga kirish</h2>
+        <p class="lead">Xizmatlar va yozilishlarni boshqarish uchun login va parolni kiriting.</p>
+
+        <div class="fc"><label><span class="yi"><svg class="i"><use href="#user"/></svg></span>Login</label><div class="v">admin</div></div>
+        <div class="fc bad"><label><span class="yi"><svg class="i"><use href="#lock"/></svg></span>Parol</label><div class="v">••••••••</div></div>
+        <div class="err"><svg class="i" style="width:15px;height:15px"><use href="#alert"/></svg>Login yoki parol xato</div>
+        <button class="btn">Kirish</button>
+
+        <div class="bottom">
+          <div><b>09:00</b><span>Ochilish</span></div>
+          <div><b>19:00</b><span>Yopilish</span></div>
+          <div><b>30 daq.</b><span>Vaqt qadami</span></div>
+        </div>
+      </div></div>
+    </div>
+    <div class="cap">3 · Admin kirish sahifasi</div>
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "task": "Recreate the website exactly like the reference image",
+  "reference": "uploaded_image.png",
+  "design": {
+    "style": "Premium modern SaaS",
+    "background": "Light blue-gray gradient",
+    "layout": "Three large smartphone mockups centered horizontally",
+    "alignment": "Perfectly centered",
+    "spacing": "Equal horizontal gaps"
+  },
+  "phones": [
+    {
+      "position": "left",
+      "theme": "Blue gradient",
+      "content": "Logo, navigation, large heading, description, CTA button, app preview and floating notification cards"
+    },
+    {
+      "position": "center",
+      "theme": "White",
+      "content": "Lead management dashboard, statistics tabs, customer cards, status badges and assignment indicators"
+    },
+    {
+      "position": "right",
+      "theme": "Dark navy blue",
+      "content": "Heading, feature cards with yellow icons, descriptions and bottom statistics"
+    }
+  ],
+  "style": {
+    "font": "Inter",
+    "phone_radius": "38px",
+    "card_radius": "16px",
+    "button_radius": "30px",
+    "shadow": "Soft realistic shadows",
+    "icons": "Minimal outline",
+    "colors": ["#4359F5", "#091A3D", "#FFFFFF", "#F9DF32"]
+  },
+  "responsive": {
+    "desktop": "Show all three phones side by side",
+    "tablet": "Scale down phones proportionally",
+    "mobile": "Show phones vertically, without overflow"
+  },
+  "requirements": [
+    "Match the reference image as closely as possible",
+    "Preserve phone proportions and positioning",
+    "Recreate all visible UI elements",
+    "Do not invent a different design",
+    "Use clean, responsive and production-ready code",
+    "Ensure the final result visually matches the reference"
+  ]
+}
