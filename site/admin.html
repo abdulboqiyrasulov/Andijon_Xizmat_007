@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin kirish – Sartarosh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="login">
+<main class="box">
+  <div class="logo"><span class="mark">✂</span>Sartarosh</div>
+  <h1>Admin paneliga kirish</h1>
+  <p class="lead">Xizmatlar va yozilishlarni boshqarish uchun login va parolni kiriting.</p>
+
+  <form id="form" novalidate>
+    <div class="field" id="f-login">
+      <label for="login">Login</label>
+      <input id="login" type="text" autocomplete="username" autocapitalize="none">
+      <div class="err" hidden></div>
+    </div>
+    <div class="field" id="f-pass">
+      <label for="pass">Parol</label>
+      <input id="pass" type="password" autocomplete="current-password">
+      <div class="err" hidden></div>
+    </div>
+    <div id="auth-err" class="err" hidden style="margin:-4px 0 14px;font-size:14px">Login yoki parol xato</div>
+    <button type="submit" class="btn">Kirish</button>
+  </form>
+  <a class="back" href="index.html">← Mijoz sahifasiga qaytish</a>
+</main>
+<script src="api.js"></script>
+<script src="admin-login.js"></script>
+</body>
+</html>

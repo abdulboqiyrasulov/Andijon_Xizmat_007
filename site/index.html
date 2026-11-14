@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sartarosh – Onlayn yozilish</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="logo"><span class="mark">✂</span>Sartarosh</div>
+    <h1>Onlayn yoziling, navbat kutmang</h1>
+    <p>Xizmat va qulay vaqtni tanlang — narxni oldindan ko'ring.</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <form id="form" class="card" novalidate>
+
+    <div class="field" id="f-name">
+      <label for="name">Ism</label>
+      <input id="name" type="text" autocomplete="name" placeholder="Ismingiz">
+      <div class="err" hidden></div>
+    </div>
+
+    <div class="field" id="f-phone">
+      <label for="phone">Telefon raqam</label>
+      <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="+998 90 123 45 67">
+      <div class="err" hidden></div>
+    </div>
+
+    <div class="field" id="f-service">
+      <label>Xizmat</label>
+      <div id="services" class="services" role="radiogroup" aria-label="Xizmat"></div>
+      <div class="err" hidden></div>
+    </div>
+
+    <div class="field" id="f-date">
+      <label for="date">Sana</label>
+      <input id="date" type="date">
+      <div class="err" hidden></div>
+    </div>
+
+    <div class="field" id="f-time">
+      <label>Vaqt</label>
+      <div id="slots" class="slots" role="radiogroup" aria-label="Vaqt"></div>
+      <div class="err" hidden></div>
+    </div>
+
+    <button type="submit" class="btn">Yozilish</button>
+  </form>
+</main>
+
+<!-- Tasdiqlash oynasi -->
+<div id="modal" class="overlay" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="m-title">
+    <div id="m-confirm">
+      <h2 id="m-title">Yozilishni tasdiqlang</h2>
+      <dl class="sum">
+        <div><dt>Ism</dt><dd id="s-name"></dd></div>
+        <div><dt>Telefon</dt><dd id="s-phone"></dd></div>
+        <div><dt>Xizmat</dt><dd id="s-service"></dd></div>
+        <div><dt>Sana</dt><dd id="s-date"></dd></div>
+        <div><dt>Vaqt</dt><dd id="s-time"></dd></div>
+        <div class="total"><dt>Narx</dt><dd id="s-price"></dd></div>
+      </dl>
+      <div id="m-error" class="err big" hidden></div>
+      <div class="actions">
+        <button type="button" id="btn-back" class="btn ghost">Qayta tanlash</button>
+        <button type="button" id="btn-ok" class="btn">Tasdiqlash</button>
+      </div>
+    </div>
+    <div id="m-done" hidden>
+      <div class="tick">✓</div>
+      <h2>Siz muvaffaqiyatli yozildingiz</h2>
+      <p id="done-text"></p>
+      <button type="button" id="btn-close" class="btn">Yopish</button>
+    </div>
+  </div>
+</div>
+
+<script src="api.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

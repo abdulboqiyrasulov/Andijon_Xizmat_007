@@ -1,0 +1,53 @@
+/* Admin sahifalari (style.css ustiga qo'shimcha) */
+.btn.sm{height:42px;width:auto;padding:0 18px;font-size:14px;box-shadow:none}
+.btn.danger{background:var(--danger);box-shadow:none}
+.btn.ghost.sm{border-width:1.5px}
+
+/* --- Kirish sahifasi --- */
+body.login{min-height:100vh;background:linear-gradient(180deg,#0E2250 0%,#091A3D 60%,#06122B 100%);color:#fff;display:flex;flex-direction:column}
+.login .box{width:100%;max-width:420px;margin:auto;padding:24px 16px}
+.login .logo .mark{background:var(--yellow)}
+.login h1{font-size:28px;line-height:1.15;font-weight:800;letter-spacing:-.02em;margin:24px 0 8px}
+.login .lead{color:rgba(255,255,255,.7);margin-bottom:22px}
+.login label{color:rgba(255,255,255,.75)}
+.login input{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#fff}
+.login input::placeholder{color:rgba(255,255,255,.4)}
+.login .field.bad input{border-color:#FF8A8E}
+.login .err{color:#FF8A8E}
+.login .btn{background:var(--yellow);color:var(--navy);box-shadow:0 10px 20px -8px rgba(249,223,50,.55)}
+.login .back{display:block;text-align:center;margin-top:18px;color:rgba(255,255,255,.6);font-size:14px;text-decoration:none}
+
+/* --- Panel --- */
+.bar{border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:5}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.bar .logo .mark{background:var(--primary);color:#fff}
+.page{max-width:900px;margin:0 auto;padding:20px 16px 48px}
+.tabs{display:flex;background:var(--soft);border-radius:16px;padding:4px;margin-bottom:20px}
+.tabs button{flex:1;height:46px;border:0;border-radius:13px;background:none;font:600 15px 'Inter';color:var(--muted);cursor:pointer}
+.tabs button[aria-selected=true]{background:#fff;color:var(--primary);box-shadow:0 2px 8px rgba(9,26,61,.1)}
+.head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.head h2{font-size:20px;font-weight:800}
+
+.list{display:grid;gap:10px}
+.item{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);border-radius:16px;padding:14px}
+.item .t{flex:1;min-width:0}
+.item .t b{display:block;font-size:16px;overflow-wrap:anywhere}
+.item .t small{color:var(--muted);font-size:13px}
+.item .price{font-weight:700;color:var(--primary);white-space:nowrap}
+.acts{display:flex;gap:8px}
+.ib{width:42px;height:42px;border-radius:12px;border:0;background:var(--soft);color:var(--primary);font-size:13px;font-weight:700;cursor:pointer}
+.ib.d{background:#FDECEC;color:var(--danger)}
+
+.tablewrap{overflow-x:auto;border:1.5px solid var(--line);border-radius:16px}
+table{width:100%;border-collapse:collapse;min-width:640px;font-size:14px}
+th{background:var(--soft);text-align:left;font-weight:600;color:var(--muted);font-size:13px}
+th,td{padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right}
+
+.form-modal{display:grid;gap:0}
+.dialog .field{margin-bottom:14px}
+.dialog p.msg{color:var(--muted);margin-bottom:16px}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:12px 18px;border-radius:14px;font-weight:600;z-index:20}
+.toast[hidden]{display:none}
+@media (max-width:480px){.item{flex-wrap:wrap}.item .price{order:3}}

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Admin paneli – Sartarosh</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body hidden>
+
+<div class="bar"><div class="wrap">
+  <div class="logo"><span class="mark">✂</span>Admin</div>
+  <button type="button" id="btn-logout" class="btn ghost sm">Chiqish</button>
+</div></div>
+
+<main class="page">
+  <div class="tabs" role="tablist">
+    <button type="button" role="tab" id="tab-services" aria-selected="true">Xizmatlar</button>
+    <button type="button" role="tab" id="tab-bookings" aria-selected="false">Yozilishlar</button>
+  </div>
+
+  <section id="sec-services">
+    <div class="head"><h2>Xizmatlar</h2><button type="button" id="btn-add" class="btn sm">+ Qo'shish</button></div>
+    <div id="svc-list" class="list"></div>
+  </section>
+
+  <section id="sec-bookings" hidden>
+    <div class="head"><h2>Yozilishlar</h2></div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Sana</th><th>Vaqt</th><th>Mijoz ismi</th><th>Telefon</th><th>Xizmat</th><th class="num">Narx</th></tr></thead>
+        <tbody id="bk-body"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<!-- Xizmat qo'shish / tahrirlash -->
+<div id="modal-form" class="overlay" hidden>
+  <form class="dialog" id="svc-form" novalidate aria-labelledby="mf-title">
+    <h2 id="mf-title">Yangi xizmat</h2>
+    <div class="field" id="f-name">
+      <label for="svc-name">Xizmat nomi</label>
+      <input id="svc-name" type="text" placeholder="Masalan: Soch olish">
+      <div class="err" hidden></div>
+    </div>
+    <div class="field" id="f-price">
+      <label for="svc-price">Narxi (so'mda)</label>
+      <input id="svc-price" type="text" inputmode="numeric" placeholder="50000">
+      <div class="err" hidden></div>
+    </div>
+    <div class="field" id="f-duration">
+      <label for="svc-duration">Davomiyligi (daqiqada)</label>
+      <input id="svc-duration" type="text" inputmode="numeric" placeholder="30">
+      <div class="err" hidden></div>
+    </div>
+    <div class="actions">
+      <button type="button" id="mf-cancel" class="btn ghost">Bekor qilish</button>
+      <button type="submit" class="btn">Saqlash</button>
+    </div>
+  </form>
+</div>
+
+<!-- O'chirishni tasdiqlash -->
+<div id="modal-del" class="overlay" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="md-title">
+    <h2 id="md-title">Xizmatni o'chirasizmi?</h2>
+    <p class="msg" id="md-text"></p>
+    <div class="actions">
+      <button type="button" id="md-cancel" class="btn ghost">Bekor qilish</button>
+      <button type="button" id="md-ok" class="btn danger">O'chirish</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<script src="api.js"></script>
+<script src="panel.js"></script>
+</body>
+</html>
